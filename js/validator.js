@@ -7,41 +7,6 @@
 	var zipValid 	= false;
 
 	/*
-		This function will validate that the data is in the
-		correct format
-	*/
-	function validate( typeOfData, userData ){
-		console.log( "validate() invoked...");
-		var valid = false;
-
-		userData = sanitize( userData );
-
-		switch( typeOfData ){
-			case "email":
-				//RUN EMAIL VALIDATION SCRIPT HERE
-				console.log( "validating and email ")
-				console.log( userData );
-
-				console.log( userData.indexOf('@') );
-				if(  userData.indexOf('@') != -1 && userData.indexOf('.') != -1 &&  userData.indexOf('@') < userData.indexOf('.') && userData.length >= 9 ){
-					valid = true;
-				}
-
-				break;
-			case "auth":
-				//RUN PASSWORD VALIDATION  
-				break;
-			case "zip":
-				//RUN ZIP CODE 
-				break;
-
-		}
-
-		return valid;
-
-	}
-
-	/*
 		This function will remove malicious characters from 
 		the input
 	*/
@@ -62,6 +27,43 @@
 		return userData;
 
 	}
+	
+	/*
+		This function will validate that the data is in the
+		correct format
+	*/
+	function validate( typeOfData, userData ){
+		console.log( "validate() invoked...");
+		var valid = false;
+
+		userData = sanitize( userData );
+
+		switch( typeOfData ){
+			case "email":
+				//RUN EMAIL VALIDATION SCRIPT HERE
+				console.log( "validating and email ")
+				if(  userData.indexOf('@') != -1 && userData.indexOf('.') != -1 &&  userData.indexOf('@') < userData.indexOf('.') && userData.length >= 9 ){
+					valid = true;
+				}
+				break;
+			case "auth":
+				//RUN PASSWORD VALIDATION 
+				if( userData.length >= 6 ){
+					valid = true;
+				} 
+				break;
+			case "zip":
+				//RUN ZIP CODE 
+				if( userData.length == 5 && isNaN(userData) == false ){
+					valid = true
+				}
+				break;
+		}
+
+		return valid;
+	}
+
+
 
 
 $(document).ready( function(){
@@ -77,24 +79,30 @@ $(document).ready( function(){
 			$(".emailErr").html("This field is required!!!! -_- ");
 		}else{
 			//Validate
-			if( validate( "email", userEmail ) ){
-				console.log( "email is valid ")
-			}else{
-				console.log( "email is invalid ")
-			}
+			emailValid = validate( "email", userEmail );
 		}
 
 		if( userAuth == "" ){
 			$("#auth").css("border", "solid 1px red");
 		}else{
 			//validate
+			authValid = validate( "auth", userAuth );
 		}
 
 		if( userZip == "" ){
 			$("#zip").css("border", "solid 1px red");
 		}else{
 			//validate
+			zipValid = validate( "zip", userZip );
+			
 		}
+
+		if( emailValid && authValid && zipValid ){
+			console.log("Data is complete, ready to submit")
+		}else{
+			console.log("Please make sure you fill out the form")
+		}
+
 
 	});
 
